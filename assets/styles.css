@@ -1,0 +1,92 @@
+body {
+    font-family: 'Nohemi', sans-serif;
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+}
+
+.background {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -1;
+}
+
+.background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+header {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px 0;
+    box-sizing: border-box;
+}
+
+header img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+}
+
+footer {
+    width: 100vw;
+    max-width: 100vw;
+    padding: 20px 40px; /* more vertical padding and 40px horizontal */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 2px solid transparent;
+    border-image: linear-gradient(to right, rgba(235, 235, 235, 0.25) 0%, rgba(98, 125, 132, 0.25) 32%) 1;
+
+    background: linear-gradient(to right, rgba(235, 235, 235, 0.25), rgba(235, 235, 235, 0.25));
+}
+
+.progress-container {
+    width: 100%; /* fills footer’s content width */
+    height: 6px;
+    background: #F2FCFE;
+    border-radius: 10px;
+    overflow: hidden;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    color: #000;
+    font-size: 20px;
+    margin-bottom: 4px;
+    width: 100%;
+}
+
+@keyframes indeterminate {
+  0% {
+    left: -40%;
+  }
+  50% {
+    left: 100%
+  }
+  100% {
+    left: -40%;
+  }
+}
+
+.progress-bar {
+  position: absolute;
+  height: 100%;
+  width: 40%;
+  background: #365DE0;
+  border-radius: 10px;
+  animation: indeterminate 4s infinite ease-in-out;
+}
