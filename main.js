@@ -9,7 +9,7 @@ function createWindow() {
         minimizable: false,
         maximizable: false,
         center: true,
-        frame: false, // Make window borderless
+        frame: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -18,6 +18,15 @@ function createWindow() {
 
     win.loadFile('index.html')
         .catch(err => console.error('Failed to load index.html', err));
+
+    win.webContents.on('devtools-opened', () => {
+        win.webContents.closeDevTools();
+    });
+    win.webContents.on('before-input-event', (event, input) => {
+        if ((input.control || input.meta) && input.key.toLowerCase() === 'i' && input.type === 'keyDown') {
+            event.preventDefault();
+        }
+    });
 }
 
 app.whenReady().then(createWindow);
