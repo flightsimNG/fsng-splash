@@ -1,3 +1,7 @@
+/* 
+  Use minified script for public releases - faster loading experience
+*/
+
 body {
     font-family: 'Nohemi', sans-serif;
     margin: 0;
