@@ -28,6 +28,7 @@ function createWindow() {
     win.loadFile('index.html')
         .catch(err => console.error('Failed to load index.html', err));
 
+    // Improve for release
     win.webContents.on('devtools-opened', () => {
         win.webContents.closeDevTools();
         win.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
