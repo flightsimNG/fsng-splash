@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>fsNG Splash</title>
     <link rel="stylesheet" href="./assets/splash.css"/>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
 </head>
 <body>
     <header>
-        <img src="./assets/header.png" alt="Header" />
+        <a href="https://fsng.hengill.net/?utm_source=fsng-splash" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href); return false;"> <!-- Broken -->
+            <img src="./assets/logo.png" alt="Header" /> 
+        </a>
         <div class="btn-close">
             <svg class="btn-close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
             <path d="M18 6L6 18M6 6l12 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -20,13 +23,14 @@
     </div>
     <footer>
     <div class="progress-info">
-        <div id="progressPercent">0%</div>
-        <div id="progressStatus">checking licenses</div>
+        <div id="progressPercent"></div>
+        <div id="progressStatus">loading</div>
     </div>
     <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
     </div>
     </footer>
     <script src="./assets/script.js"></script>
+    <script src="./assets/warning.min.js"></script>
 </body>
 </html>

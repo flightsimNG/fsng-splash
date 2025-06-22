@@ -1,5 +1,4 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('path');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const os = require('os');
 
 const platform = os.type();
@@ -9,14 +8,18 @@ const appVersion = app.getVersion();
 
 const userAgent = `fsNG/${appVersion} (${platform} ${release}; Electron ${electronVersion})`;
 
+let mainWindow;
+let preventClose = false; // Deprecated however could reintroduce
+
 function createWindow() {
-    const win = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 1068,
         height: 768,
         resizable: false,
         minimizable: false,
         maximizable: false,
         center: true,
+        icon: './assets/favicon.ico',
         frame: false,
         webPreferences: {
             nodeIntegration: true,
@@ -24,27 +27,70 @@ function createWindow() {
             userAgent: userAgent
         }
     });
-
-    win.loadFile('index.html')
+    
+    mainWindow.loadFile('index.html')
         .catch(err => console.error('Failed to load index.html', err));
 
-    // Improve for release
-    win.webContents.on('devtools-opened', () => {
-        win.webContents.closeDevTools();
-        win.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
-        details.requestHeaders['User-Agent'] = userAgent;
-        callback({ cancel: false, requestHeaders: details.requestHeaders });
-        });
+    let devToolsToggleCount = 0;
+    let lastToggleTime = 0;
 
-    });
-    win.webContents.on('before-input-event', (event, input) => {
-        if ((input.control || input.meta) && input.key.toLowerCase() === 'i' && input.type === 'keyDown') {
+    mainWindow.webContents.on('before-input-event', (event, input) => {
+        const isDevToolsCombo = input.control && input.shift && input.key.toLowerCase() === 'i' && input.type === 'keyDown';
+
+        if (isDevToolsCombo) {
+            const currentTime = Date.now();
+            const timeDiff = currentTime - lastToggleTime;
+
+            if (timeDiff < 600) {
+                devToolsToggleCount++;
+            } else {
+                devToolsToggleCount = 1;
+            }
+
+            lastToggleTime = currentTime;
             event.preventDefault();
+
+            if (devToolsToggleCount === 2) {
+                mainWindow.webContents.openDevTools({ mode: 'detach' });
+                devToolsToggleCount = 0;
+            }
         }
     });
 }
 
-app.whenReady().then(createWindow);
+function createPopup() {
+    const popup = new BrowserWindow({
+        width: 397,
+        height: 561,
+        resizable: false,
+        minimizable: false,
+        maximizable: false,
+        frame: true,
+        icon: './assets/favicon.ico',
+        title: 'Sign into fsNG • Hengill ID',
+        autoHideMenuBar: true,
+        parent: mainWindow,
+        modal: true,
+        show: false,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
+    });
+
+    popup.once('ready-to-show', () => popup.show());
+    popup.loadFile('assets/login-host.html')
+        .catch(err => console.error('Failed to load popup', err));
+}
+
+app.whenReady().then(() => {
+    createWindow();
+
+    
+    ipcMain.on('open-login-popup', () => {
+        createPopup();
+    });
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
